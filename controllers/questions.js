@@ -2,10 +2,9 @@ const Question = require('../models/question');
 const UserQuestion = require('../models/userquestion');
 
 exports.getQuestions = (req, res, next) => {
-    const questionQuery = Question.find()
     let fetchedQuestions;
 
-    questionQuery
+    Question.find()
         .then(questions => {
             fetchedQuestions = questions;
             res.status(200).json({
@@ -75,4 +74,34 @@ exports.putQuestion = (req, res, next) => {
                 message: 'Adding question to array failed'
             });
         });
+}
+
+exports.getUserQuestions = (req,res,next) => {
+    let fetchedQuestions;
+    UserQuestion.findOne({_id: req.params.userId})
+        .then(questions => {
+            fetchedQuestions = questions;
+            res.status(200).json({
+                message: 'Questions fetched successfully',
+                questionsArray: fetchedQuestions
+            });
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: 'Fetching posts failed'
+            });
+        });
+}
+
+exports.removeUserQuestion = (req,res,next) => {
+    console.log('Deleted');
+
+    UserQuestion.updateOne({_id: req.params.userId}, { $pull: { 'questions': { _id: req.params.questionId}}})
+     .then(result => {
+        console.log(result);
+        res.status(200).json({message: 'Deletion successful'});
+     })
+     .catch(error => {
+        res.status(500).json({message: 'Deletion failed'});
+     });
 }
