@@ -155,3 +155,19 @@ exports.putFormSubmission = (req,res,next) => {
             }
         });
 }
+
+exports.getDayResponse = (req,res,next) => {
+    console.log('Made it here', req.params.date);
+    UserSubmission.findOne( {_id: req.params.userId, [req.params.date]: { $exists: true}}, {[req.params.date]: true, _id: false })
+        .then(date => {
+            console.log(date);
+            if (date !== null) {
+                res.status(200).json({message: 'Found date', day: date});
+            } else {
+                res.status(500).json({message: 'Could not find date'});
+            }
+        })
+        .catch(error => {
+            res.status(500).json({message: 'Could not complete search'});
+        });
+}

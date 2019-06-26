@@ -12,6 +12,8 @@ router.get('', QuestionsController.getQuestions);
 
 router.put('', QuestionsController.putQuestion);
 
+router.get('/:userId/:date', QuestionsController.getDayResponse);
+
 router.delete('/:userId/:questionId', QuestionsController.removeUserQuestion);
 
 module.exports = router;
