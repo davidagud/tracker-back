@@ -160,11 +160,11 @@ exports.getDayResponse = (req,res,next) => {
     console.log('Made it here', req.params.date);
     UserSubmission.findOne( {_id: req.params.userId, [req.params.date]: { $exists: true}}, {[req.params.date]: true, _id: false })
         .then(date => {
-            console.log(date);
+            console.log('Backend', date);
             if (date !== null) {
                 res.status(200).json({message: 'Found date', day: date});
             } else {
-                res.status(500).json({message: 'Could not find date'});
+                res.status(500).json({message: 'Could not find date', day: date});
             }
         })
         .catch(error => {
