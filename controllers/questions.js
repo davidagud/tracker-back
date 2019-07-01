@@ -162,9 +162,9 @@ exports.getDayResponse = (req,res,next) => {
         .then(date => {
             console.log('Backend', date);
             if (date !== null) {
-                res.status(200).json({message: 'Found date', day: date});
+                res.status(200).json({message: 'Successfully searched for and found date', day: date});
             } else {
-                res.status(500).json({message: 'Could not find date', day: date});
+                res.status(200).json({message: 'Successfully searched for date, none found', day: date });
             }
         })
         .catch(error => {
