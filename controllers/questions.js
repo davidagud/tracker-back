@@ -37,7 +37,6 @@ exports.putQuestion = (req, res, next) => {
         .then(user => {
             if (user == null) {
                 question.save().then(() => {
-                    console.log('Added');
                     res.status(200).json({message: 'Saved response successfully'});
                 })
                 .catch(error => {
@@ -45,13 +44,11 @@ exports.putQuestion = (req, res, next) => {
                 });
             } else {
                 let result = user.questions.some(question => {
-                    console.log('loop', question.id, req.body.id);
                     if (question.id == req.body.id) {
                         return true;
                     }
                 });
                 if (!result) {
-                    console.log('Updating array');
                     user.questions.push(
                         {
                             _id: req.body.id,
@@ -68,16 +65,13 @@ exports.putQuestion = (req, res, next) => {
                                 message: 'Question added successfully to existing array',
                                 question: {...addedQuestion}
                             });
-                            console.log('Added question to array', addedQuestion);
                         })
                         .catch(error => {
                             res.status(500).json({
                                 message: 'Adding question to array failed'
                             });
                         });
-                } else {
-                    console.log('Already exists');
-                };
+                }
             }
         })
         .catch(err => {
@@ -105,11 +99,8 @@ exports.getUserQuestions = (req,res,next) => {
 }
 
 exports.removeUserQuestion = (req,res,next) => {
-    console.log('Deleted');
-
     UserQuestion.updateOne({_id: req.params.userId}, { $pull: { 'questions': { _id: req.params.questionId}}})
         .then(result => {
-            console.log(result);
             res.status(200).json({message: 'Deletion successful'});
         })
         .catch(error => {
@@ -124,29 +115,22 @@ exports.putFormSubmission = (req,res,next) => {
         [parsedDate]: req.body.questions
     });
 
-    console.log('parsed', parsedDate);
-
     UserSubmission.findOne({_id: req.body.userId})
         .then(user => {
             if (user) {
                 user = user.toObject();
-                console.log('Found date', user[parsedDate]);
             }
             if (user == null) {
-                console.log('User');
                 userSubmission.save()
                     .then(() => {
-                        console.log('Added');
                         res.status(200).json({message: 'Saved new entry successfully'});
                     })
                     .catch(error => {
                         res.status(500).json({message: 'Saving new entry failed'});
                     });
             }  else {
-                console.log('with parsed date', user);
                 userSubmission.update({ [parsedDate]: req.body.questions })
                     .then(() => {
-                        console.log('Added');
                         res.status(200).json({message: 'Updated day entry successfully'});
                     })
                     .catch(error => {
@@ -157,10 +141,8 @@ exports.putFormSubmission = (req,res,next) => {
 }
 
 exports.getDayResponse = (req,res,next) => {
-    console.log('Made it here', req.params.date);
     UserSubmission.findOne( {_id: req.params.userId, [req.params.date]: { $exists: true}}, {[req.params.date]: true, _id: false })
         .then(date => {
-            console.log('Backend', date);
             if (date !== null) {
                 res.status(200).json({message: 'Successfully searched for and found date', day: date});
             } else {
